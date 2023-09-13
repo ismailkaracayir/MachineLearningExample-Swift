@@ -40,12 +40,29 @@ class ViewController: UIViewController , UIImagePickerControllerDelegate,UINavig
           let request = VNCoreMLRequest(model: model) { vnRequest, error in
               if let result = vnRequest.results as? [VNClassificationObservation]{
                   if result.count > 0 {
+                      let topResult = result[0]
+                      DispatchQueue.main.async {
+                          let confi = (topResult.confidence ) * 100
+                          self.DescriptionLabel.text = "\(confi) it is \(String(describing: topResult.identifier))"
+                      }
                       
                   }
                   
               }
           }
+          let handler = VNImageRequestHandler(ciImage: image)
+          DispatchQueue.global(qos: .userInteractive).async {
+              do {
+                  try handler.perform([request])
+              }catch{
+                  print("hata")
+                  
+              }
+              }
       }
+      
+  
+      
   }
     
 }
